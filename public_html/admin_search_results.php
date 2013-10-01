@@ -1,0 +1,121 @@
+<?php
+   $__me =& XMEC::getUser();
+   if (!$__me->isAdmin()) {
+		exit ;
+   }
+   $res =& XMEC::search($search_fil, $search_start, $search_count);
+   $no_links = 5; // half the no. of navigation links (1 2 3...)
+?>
+
+<TABLE border=0 cellPadding=0 cellSpacing=3 width=90%>
+
+<?php
+$total = $res['total'];
+if ($res['total'] > $search_count ) {
+    $rem = (int)(($res['total'] + $search_count - 1)/ $search_count);
+    $current = (int)(($search_start + $search_count - 1)/$search_count);
+
+    echo "<TR>";
+    echo "<TD align=left>";
+    if ($search_start > 0)
+        echo "<A href=$PHP_SELF?name=".urlencode($search_fil['name'])."&workrole=".urlencode($search_fil['work_type'])."&company=".urlencode($search_fil['company'])."&year=".urlencode($search_fil['year'])."&branch=".urlencode($search_fil['branch'])."&location=".urlencode($search_fil['location'])."&f=".(($current - 1)*$search_count)."&c=$search_count&s=1 class=link><img src=images/back.gif border=0></A></TD>";
+    else
+	echo "&nbsp;</TD>";
+
+    echo "<TD align=center colspan=2>";
+
+	if ($current - $no_links < 0)
+		$xfrom = 0;
+	else
+		$xfrom = $current - $no_links;
+
+	$xto = $xfrom + $no_links * 2;
+
+	if ($xto > $rem) {
+		$xto = $rem;
+		$xfrom = $rem - $no_links * 2;
+		if ($xfrom < 0)
+			$xfrom = 0;
+	}
+
+        for ($i = $xfrom; $i < $xto; $i++) {
+		if ($i == $current) {
+			echo "<b>";
+                        echo "<span class='page_no'>";
+		}
+        echo "<A class= link href=$PHP_SELF?name=".urlencode($search_fil['name'])."&workrole=".urlencode($search_fil['work_type'])."&company=".urlencode($search_fil['company'])."&year=".urlencode($search_fil['year'])."&branch=".urlencode($search_fil['branch'])."&location=".urlencode($search_fil['location'])."&f=".($i*$search_count)."&c=$search_count&s=1>".($i+1)."</A>&nbsp;";
+		if ($i == $current) {
+                        echo "</span>";
+			echo "</b>";
+		}
+        }
+    echo "</TD>";
+    echo "<TD align=right>";
+    if ($search_start + $search_count < $total)
+        echo "<A href=$PHP_SELF?name=".urlencode($search_fil['name'])."&workrole=".urlencode($search_fil['work_type'])."&company=".urlencode($search_fil['company'])."&year=".urlencode($search_fil['year'])."&branch=".urlencode($search_fil['branch'])."&location=".urlencode($search_fil['location'])."&f=".(($current + 1)*$search_count)."&c=$search_count&s=1 class=link><img src=images/next.gif border=0></A></TD>";
+    else
+	echo "&nbsp;</TD>";
+    echo "</TR>";
+}
+?>
+	<TR bgcolor="#CFDDD1">
+		<TD><b class=stitle>Name</b></TD>
+		<TD><b class=stitle>Organisation</b></TD>
+		<TD><b class=stitle>Location</b></TD>
+		<TD><b class=stitle>Branch</b></TD>
+		<TD><b class=stitle>Batch</b></TD>
+	</TR>
+
+<?php
+for ($i = 0; $i < $res['count']; $i++) {
+	echo "<TR". (($i%2)?" bgcolor=\"#CFDDD1\">":">");
+
+   	echo "<TD><A href='profile_admin.php?s=1&id=".rawurlencode($res[$i]->id)."' onClick=\"javascript:open('profile_admin.php?s=1&id=",rawurlencode($res[$i]->id),"','','scroll=yes,scrollbars=yes');return false;\" class=flink>", htmlentities($res[$i]->name), "</a>\n";
+   	echo "&nbsp;&nbsp;<A href='admin_preferences.php?s=1&id=".rawurlencode($res[$i]->id)."' onClick=\"javascript:open('admin_preferences.php?s=1&id=",rawurlencode($res[$i]->id),"','','width=600,height=480,scroll=yes,scrollbars=yes');return false;\" class=link>pref</a>\n";
+   	echo "&nbsp;&nbsp;<A href='rollno.php?s=1&id=",rawurlencode($res[$i]->id),"'class=flink>Email</a></TD>\n";
+	echo "<TD class=body>". ($res[$i]->company == ""?"&nbsp;":htmlentities($res[$i]->company)) . "</TD>";
+	echo "<TD class=body>" . ($res[$i]->location == ""?"&nbsp;":htmlentities($res[$i]->location)). "</TD>";
+        echo "<TD class=body>" . ($res[$i]->branch == ""?"&nbsp;":htmlentities($res[$i]->branch)). "</TD>";
+	echo "<TD class=body>" . ($res[$i]->year == ""?"&nbsp;":htmlentities($res[$i]->year)). "</TD>";
+	echo "</TR>\n";
+}
+
+$total = $res['total'];
+if ($res['total'] > $search_count ) {
+    $rem = (int)(($res['total'] + $search_count - 1)/ $search_count);
+    $current = (int)(($search_start + $search_count - 1)/$search_count);
+
+    echo "<TR>";
+    echo "<TD align=left>";
+    if ($search_start > 0)
+        echo "<A class=link href=$PHP_SELF?name=".urlencode($search_fil['name'])."&workrole=".urlencode($search_fil['work_type'])."&company=".urlencode($search_fil['company'])."&year=".urlencode($search_fil['year'])."&branch=".urlencode($search_fil['branch'])."&location=".urlencode($search_fil['location'])."&f=".(($current - 1)*$search_count)."&c=$search_count&s=1 class=link><img src=images/back.gif border=0></A></TD>";
+    else
+	echo "&nbsp;</TD>";
+
+    echo "<TD align=center colspan=2>";
+
+        for ($i = $xfrom; $i < $xto; $i++) {
+		if ($i == $current) {
+			echo "<b>";
+                        echo "<span class='page_no'>";
+		}
+        echo "<A class=link href=$PHP_SELF?name=".urlencode($search_fil['name'])."&workrole=".urlencode($search_fil['work_type'])."&company=".urlencode($search_fil['company'])."&year=".urlencode($search_fil['year'])."&branch=".urlencode($search_fil['branch'])."&location=".urlencode($search_fil['location'])."&f=".($i*$search_count)."&c=$search_count&s=1> &nbsp;".($i+1)."</A>";
+		if ($i == $current) {
+                        echo "</span>";
+			echo "</b>";
+		}
+        }
+    echo "</TD>";
+    echo "<TD align=right>";
+    if ($search_start + $search_count < $total)
+        echo "<A href=$PHP_SELF?name=".urlencode($search_fil['name'])."&workrole=".urlencode($search_fil['work_type'])."&company=".urlencode($search_fil['company'])."&year=".urlencode($search_fil['year'])."&branch=".urlencode($search_fil['branch'])."&location=".urlencode($search_fil['location'])."&f=".(($current + 1)*$search_count)."&c=$search_count&s=1 class=link><img src=images/next.gif border=0></A></TD>";
+    else
+	echo "&nbsp;</TD>";
+    echo "</TR>";
+}
+?>
+	<TR>
+		<TD colspan=5 bgcolor="#CFDDD1" height=2><img src="images/space.gif"></TD>
+	</TR>
+</TABLE>
+<BR>
